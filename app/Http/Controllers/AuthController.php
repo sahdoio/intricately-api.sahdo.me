@@ -54,11 +54,20 @@ class AuthController extends BaseController
      * @return mixed
      */
     public function authenticate()
-    {   
-        $this->validate($this->request, [
-            'email'     => 'required|email',
-            'password'  => 'required'
-        ]);
+    {
+        if (!$this->request->email) {
+            return response()->json([
+                'status' => 'warning',
+                'message' => 'You must type your e-mail account'
+            ]);
+        }
+
+        if (!$this->request->password) {
+            return response()->json([
+                'status' => 'warning',
+                'message' => 'You must type your a valid password'
+            ]);
+        }
 
         $database = 'admin_users';
 
