@@ -65,7 +65,7 @@ class AuthController extends BaseController
         if (!$this->request->password) {
             return response()->json([
                 'status' => 'warning',
-                'message' => 'You must type your a valid password'
+                'message' => 'You must type a valid password'
             ]);
         }
 
