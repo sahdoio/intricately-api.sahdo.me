@@ -23,8 +23,6 @@ class CorsMiddleware
             'Access-Control-Allow-Headers' => 'Content-Type, Authorization, X-Requested-With'
         ];
 
-        dd('here');
-
         if ($request->isMethod('OPTIONS')) {
             return response()->json('{"method":"OPTIONS"}', 200, $headers);
         }

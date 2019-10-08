@@ -12,6 +12,9 @@
 */
 
 $router->group(['middleware' => 'cors'], function() use ($router) {
+    // add OPTIONS route to fire cors middleware for preflight
+    $router->options('/{route:.*}/', function (){return ['status' => 'ok'];});
+
     $router->get('/', function () use ($router) {
         return view('root');
     });
@@ -23,18 +26,6 @@ $router->group(['middleware' => 'cors'], function() use ($router) {
     */
 
     $router->post('auth/login', ['as' => 'auth.login', 'uses' => 'AuthController@authenticate']);
-
-    /*
-    ######################################
-    # Posts
-    ######################################
-    */
-
-    $router->get('/posts/{post_id}', ['as' => 'posts.one', 'uses' => 'PostController@singlePost']);
-    $router->get('/posts', ['as' => 'posts.all', 'uses' => 'PostController@allPosts']);
-    $router->get('/posts/{post_id}/comments', ['as' => 'posts.comments', 'uses' => 'PostController@postComments']);
-    $router->get('/posts/comments/{comment_id}', ['as' => 'posts.comments.one', 'uses' => 'PostController@singleComment']);
-    $router->post('/posts/{post_id}/comments', ['as' => 'posts.comments.new', 'uses' => 'PostController@newComment']);
 
     /*
     ######################################
@@ -51,11 +42,10 @@ $router->group(['middleware' => 'cors'], function() use ($router) {
 
         /*
         ######################################
-        # Posts
+        # Company Data
         ######################################
         */
-        $router->post('/posts', ['as' => 'posts.new', 'uses' => 'PostController@newPost']);
-        $router->post('/posts/{post_id}', ['as' => 'posts.update', 'uses' => 'PostController@updatePost']);
-        $router->get('/posts/{post_id}/delete', ['as' => 'posts.delete', 'uses' => 'PostController@deletePost']);
+        $router->get('/company_data', ['as' => 'company_data', 'uses' => 'DashboardController@companyData']);
+        $router->post('/company_data', ['as' => 'company_data.update', 'uses' => 'DashboardController@companyDataUpdate']);
     });
 });

@@ -104,6 +104,32 @@ class MongoManager
         return $res;
     }
 
+
+    /**
+     * @param $id
+     * @param $content
+     * @param $collection
+     * @return array
+     */
+    public function updateDocumentByField($field, $value, $content, $collection) {
+        $res = [];
+
+        try {
+            $collection = $this->database->$collection->updateOne(
+                [$field => $value],
+                ['$set' => $content]
+            );
+
+            $res["status"] = true;
+        }
+        catch (Exeception $e) {
+            $res["status"] = false;
+            $res["error"] = $e;
+        }
+
+        return $res;
+    }
+
     /*
      #########################################
      * Delete Methods

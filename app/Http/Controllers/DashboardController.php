@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Libs\MongoManager;
 use Illuminate\Http\Request;
-use App\Core\Dashboard;
 use Auth;
 
 class DashboardController extends Controller
 {
-    private $butler;
-    private $dashboard;
+    private $database;
 
     /**
      * DashboardController constructor.
@@ -17,32 +16,85 @@ class DashboardController extends Controller
      */
     function __construct(Request $request)
     {
-        $this->butler = $request->get('butler');
-        $this->dashboard = new Dashboard($this->butler);
+        $this->database = new MongoManager(env('DB_HOST'), env('DB_DATABASE'));
     }
 
     /**
      * Get data
      * @return \Illuminate\Http\JsonResponse
      */
-    public function data(Request $request)
+    public function companyData(Request $request)
     {
-        $total_revenue = $this->dashboard->totalRevenue();
-        $total_orders = $this->dashboard->totalOrders();
-        $total_customers = $this->dashboard->totalCustomers();
-        $total_products = $this->dashboard->totalProducts();
-        $revenue_month = $this->dashboard->revenueMonth($request->payload, false);
-        $revenue_month_recommended = $this->dashboard->revenueMonth($request->payload, true);
+        try {
+            $document = $this->database->getDocuments('company_data', 1000);
+            $data = isset($document[0]) ? $document[0] : [];
 
-        $data = [
-            'total_revenue' => $total_revenue,
-            'total_orders' => $total_orders,
-            'total_customers' => $total_customers,
-            'total_product' => $total_products,
-            'revenue_month' => $revenue_month,
-            'revenue_month_recommended' => $revenue_month_recommended
-        ];
+            $response = [
+                'status' => 'ok',
+                'message' => 'success',
+                'data' => $data
+            ];
+        }
+        catch (Execption $e) {
+            $response = [
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ];
+        }
 
-        return response()->json($data);
+        return response()->json($response);
+    }
+
+    /**
+     * Get data
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function companyDataUpdate(Request $request)
+    {
+        $payload = json_decode($request->payload);
+
+        $company_name = isset($payload->company_name) ? $payload->company_name : '';
+        $company_spend = isset($payload->company_spend) ? $payload->company_spend : null;
+        $company_min_spend = isset($payload->company_min_spend) ? $payload->company_min_spend : null;
+        $company_max_spend = isset($payload->company_max_spend) ? $payload->company_max_spend : null;
+        $additional_notes = isset($payload->additional_notes) ? $payload->additional_notes : '';
+
+        try {
+            $document = $this->database->getDocuments('company_data', 1000);
+            $company_data = isset($document[0]) ? $document[0] : false;
+
+            if ($company_data) {
+                $status = $this->database->updateDocumentByField(
+                    '_id',
+                    $company_data['_id'],
+                    [
+                        'company_name' => $company_name,
+                        'company_spend' => $company_spend,
+                        'company_min_spend' => $company_min_spend,
+                        'company_max_spend' => $company_max_spend,
+                        'additional_notes' => $additional_notes
+                    ],
+                    'company_data'
+                );
+
+                $response = [
+                    'status' => 'ok',
+                    'message' => 'Updated with success'
+                ];
+            } else {
+                $response = [
+                    'status' => 'error',
+                    'message' => 'Error trying to update company data'
+                ];
+            }
+        }
+        catch (Execption $e) {
+            $response = [
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ];
+        }
+
+        return response()->json($response);
     }
 }

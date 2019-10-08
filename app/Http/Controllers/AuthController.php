@@ -37,7 +37,7 @@ class AuthController extends BaseController
     {
         $payload = [
             'iss' => "lumen-jwt", // Issuer of the token
-            'sub' => $user->id, // Subject of the token
+            'sub' => $user->email, // Subject of the token
             'iat' => time(), // Time when JWT was issued.
             'exp' => time() + 7*24*60*60 // Expiration time - 7 days
         ];
@@ -60,22 +60,7 @@ class AuthController extends BaseController
             'password'  => 'required'
         ]);
 
-        // type 1 - normal users
-        // type 2 - admin users
-        $type = $this->request->get('type');
-        $type = $type ? $type : 1;
-
-        $database = 'users';
-        if ($type == 2) {
-            $database = 'admin_users';
-        }
-
-        // Find the user by email
-        /*
-        Mysql Mode
-
-        $user = User::where('email', $this->request->input('email'))->first();
-        */
+        $database = 'admin_users';
 
         // mongo mode
         $user = $this->database->getDocumentByField(
@@ -86,8 +71,8 @@ class AuthController extends BaseController
 
         if (!$user) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Email does not exist'
+                'status' => 'warning',
+                'message' => 'No account found for this e-mail'
             ]);
         }
 
@@ -101,8 +86,8 @@ class AuthController extends BaseController
 
         // Bad Request response
         return response()->json([
-            'status' => 'error',
-            'message' => 'Email or password is wrong'
+            'status' => 'warning',
+            'message' => 'Invalid password'
         ]);
     }
 

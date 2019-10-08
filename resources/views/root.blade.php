@@ -17,9 +17,7 @@
             height: 100%;
             min-height: 800px;
             text-align: center;
-            background: #141E30;
-            background: -webkit-gradient(linear, left top, right top, from(#00212a), color-stop(60%, #0096ae), to(#0096ae));
-            background: linear-gradient(to right, #00212a 0%, #0096ae 60%, #06626c 100%);
+            background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(135deg, #002b66, #46004d 76%);
         }
 
         .main-title {
@@ -42,7 +40,7 @@
 </head>
 <body>
     <div class="main-block">
-        <h1 class="main-title">api.sahdo.me</h1>
+        <h1 class="main-title">intricately-api.sahdo.me</h1>
         <h3 class="main-subtitle">all rights reserved</h3>
     </div>
 </body>
