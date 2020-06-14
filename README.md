@@ -50,7 +50,7 @@ Create the .env file and paste the following configuration:
     LOG_SLACK_WEBHOOK_URL=
     
     DB_CONNECTION=mongodb
-    DB_HOST=mongodb://165.227.190.249:27777
+    DB_HOST=mongodb://<ip_do_servidor>:<porta_mongo>
     DB_PORT=3306
     DB_DATABASE=sahdo_me
     
